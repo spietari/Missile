@@ -21,7 +21,6 @@ public class GameController : MonoBehaviour {
 	
 		set {
 			if (_gameIsRunning == value) return;
-			_gameIsRunning = value;
 			if (value) {
 				score.reset();
 				showMessage("Destroy the asteroids!");
@@ -29,6 +28,7 @@ public class GameController : MonoBehaviour {
 			} else {
 				showMessage("Game Over! Click anywhere to try again!");
 			}
+			_gameIsRunning = value;
 		}
 	}
 

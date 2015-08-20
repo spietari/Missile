@@ -13,22 +13,22 @@ public class Cannon : MonoBehaviour {
 
 	public GameObject bulletModel;
 	public GameObject bulletSpawnPoint;
-
-	public Image speedBar;
+	public GameObject bulletTargetModel;
 
 	private float angle = 0;
 
-	private float speed = 0;
-
+	private GameController gameController;
+	
 	// Use this for initialization
 	void Start () {
-		speedBar.fillAmount = 0;
-		speedBar.SetAllDirty();	
+		gameController = GameObject.Find("Game Controller").GetComponent<GameController>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
+		if (!gameController.gameIsRunning) return;
+
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
 		float x = pipe.transform.position.x - ray.origin.x;
@@ -40,25 +40,23 @@ public class Cannon : MonoBehaviour {
 	
 		pipe.transform.localRotation = Quaternion.Euler(0, 0, angle);
 
-		if (Input.GetMouseButton(0)) {
-			speed += 10;
-			speed = Mathf.Clamp(speed, 0, 300);
-			speedBar.fillAmount = speed / maxSpeed;
-			speedBar.SetAllDirty();	
+		if (Input.GetMouseButtonDown(0)) {
+			fire(300, ray.origin);
+		}
+	}
+
+	void fire(float speed, Vector3 targetPosition) {
+
+		if (GameObject.FindGameObjectsWithTag("bullet").Length > 0) {
+			return;
 		}
 
-		if (speed > 0 && Input.GetMouseButtonUp(0)) {
-
-			GameObject bullet = GameObject.Instantiate(bulletModel, bulletSpawnPoint.transform.position, pipe.transform.rotation) as GameObject;
-			
-			Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-			rb.AddRelativeForce(new Vector2(0, speed)); 
-			
-			Destroy(bullet, 2);
-
-			speed = 0;
-			speedBar.fillAmount = 0;
-			speedBar.SetAllDirty();	
-		}
+		GameObject bullet = GameObject.Instantiate(bulletModel, bulletSpawnPoint.transform.position, pipe.transform.rotation) as GameObject;
+		GameObject target = GameObject.Instantiate(bulletTargetModel, targetPosition, Quaternion.identity) as GameObject;
+		
+		Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+		rb.AddRelativeForce(new Vector2(0, speed)); 
+		
+		Destroy(bullet, 2);
 	}
 }

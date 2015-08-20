@@ -5,7 +5,11 @@ public class Asteroid : MonoBehaviour {
 
 	public float spawnDistance = 8;
 
+	public float asteroidSpeed = 50;
+
 	private GameController gameController;
+
+
 
 	// Use this for initialization
 	void Start () {
@@ -19,7 +23,9 @@ public class Asteroid : MonoBehaviour {
 		Rigidbody2D rb = GetComponent<Rigidbody2D>();
 		rb.angularVelocity = Random.Range(-100, 100);
 
-		rb.AddRelativeForce(new Vector2(Random.Range(-50, 50), Random.Range(-100, 0)));
+		float speed = Random.value * asteroidSpeed;
+
+		rb.AddRelativeForce(new Vector2(-speed * Mathf.Sin(angle), -speed * Mathf.Cos(angle)));
 
 	}
 		
@@ -34,8 +40,10 @@ public class Asteroid : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D coll)  {
-		gameController.addKill();
-		Destroy(coll.gameObject);
-		Destroy(gameObject);
+		if (coll.gameObject.tag == "bullet") {
+			gameController.addKill();	
+			Destroy(coll.gameObject);
+			Destroy(gameObject);
+		}
 	}
 }
