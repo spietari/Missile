@@ -30,7 +30,6 @@ public class Cannon : MonoBehaviour {
 	void Update () {
 	
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		Debug.Log(ray.origin.x + " " + ray.origin.y);
 
 		float x = pipe.transform.position.x - ray.origin.x;
 		float y = ray.origin.y - pipe.transform.position.y;

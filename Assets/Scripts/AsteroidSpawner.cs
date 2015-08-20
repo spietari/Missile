@@ -8,7 +8,7 @@ public class AsteroidSpawner : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		spawn();
+
 	}
 
 	public void spawn() {
