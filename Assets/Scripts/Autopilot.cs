@@ -5,12 +5,13 @@ public class Autopilot : MonoBehaviour {
 
 	private Cannon cannon;
 
-	// Use this for initialization
 	void Start () {
 		cannon = GameObject.Find("Cannon").GetComponent<Cannon>();
 	}
-	
-	// Update is called once per frame
+
+	// Autopilot just gets all the asteroids that haven't been already shot
+	// and aims towards the first of them. When that's been shot it goes to
+	// next one and shoots.
 	void Update () {
 	
 		GameObject[] asteroids = GameObject.FindGameObjectsWithTag("asteroid");
@@ -44,6 +45,7 @@ public class Autopilot : MonoBehaviour {
 				asteroid.autopilotShotTag = cannon.fire(aimPoint);
 			}
 
+			break;
 		}
 
 	}

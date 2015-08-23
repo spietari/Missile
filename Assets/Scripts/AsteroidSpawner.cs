@@ -7,6 +7,9 @@ public class AsteroidSpawner : MonoBehaviour {
 	public float spawnDistance = 7.5f;
 	public float asteroidMinSpeed = 50.0f;
 
+	// This spawn an asteroid on an arc at spawnDistance from the cannot
+	// +/- 45 degrees from the y axis. It's given a random angular velocity
+	// and a random relative force pushes it downwards always towards the cannon.
 	public void spawn(float level) {
 		GameObject asteroidGO = Instantiate(asteroidModel);
 		asteroidGO.transform.parent = gameObject.transform;

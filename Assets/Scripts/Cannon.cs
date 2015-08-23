@@ -11,7 +11,6 @@ public class Cannon : MonoBehaviour {
 	private const float fireSpeed = 120.0f;
 
 	public GameObject pipe;
-
 	public GameObject bulletModel;
 	public GameObject bulletSpawnPoint;
 	
@@ -19,12 +18,12 @@ public class Cannon : MonoBehaviour {
 
 	private GameController gameController;
 
-	// Use this for initialization
 	void Start () {
 		gameController = GameObject.Find("Game Controller").GetComponent<GameController>();
 	}
-	
-	// Update is called once per frame
+
+	// Mouse position is checked if autopilot is not active. The cannon aims
+	// towards the mouse and the cannon can be fired if the game is running.
 	void Update () {
 	
 		if (gameController.autopilot.enabled) return;
@@ -39,19 +38,21 @@ public class Cannon : MonoBehaviour {
 		}
 	}
 
+	// Aim the cannon towards a target. This returns true when
+	// the aim error is less than two degrees. 
 	public bool aim(Vector2 position) {
 		float x = pipe.transform.position.x - position.x;
 		float y = position.y - pipe.transform.position.y;
 		float newAngle = Mathf.Rad2Deg * Mathf.Atan2(x, y);
 		newAngle = Mathf.Clamp(newAngle, minAngle, maxAngle);
-
 		angle = Mathf.Lerp(angle, newAngle, 10.0f * Time.deltaTime);
-
 		pipe.transform.localRotation = Quaternion.Euler(0, 0, angle);
-
 		return Mathf.Abs(angle - newAngle) < 2.0;
 	}
 
+	// Fire instantiates and shoots a bullet along the current 
+	// pipe angle. Target position is given to the bullet so that
+	// it knows where to autodestruct.
 	public bool fire(Vector3 targetPosition) {
 
 		if (Bullet.bulletsOnAir) {

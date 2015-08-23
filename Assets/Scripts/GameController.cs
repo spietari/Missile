@@ -17,6 +17,8 @@ public class GameController : MonoBehaviour {
 	private Text welcomeText;
 	private bool _gameIsRunning = false;
 
+	// This variable takes care of what happens when a game ends
+	// or a new game is started.
 	public bool gameIsRunning {
 	
 		get {
@@ -49,6 +51,8 @@ public class GameController : MonoBehaviour {
 		autopilot.enabled = false;
 	}
 
+	// This method takes care of starting the game and engaging / disengaging 
+	// the autopilot.
 	void Update() {
 		if (!gameIsRunning && Input.GetMouseButtonDown(0)) {
 			gameIsRunning = true;
@@ -64,7 +68,9 @@ public class GameController : MonoBehaviour {
 			}
 		}
 	}
-	
+
+	// A score is always given when autopilot is off.
+	// Spawner gives progressively faster asteroids as the score increases.
 	public void addKill() {
 		if (!autopilot.enabled) {
 			showMessage("+1");
@@ -73,10 +79,12 @@ public class GameController : MonoBehaviour {
 		spawner.spawn(score.score);
 	}
 
+	// End the game whenever there's a miss.
 	public void missed() {
 		gameIsRunning = false;
 	}
 
+	// Display a new message and tween it upwards with a fade out.
 	public void showMessage(string message, float duration = 3.0f) {
 	
 		GameObject textGO = Instantiate(messageModel) as GameObject;
@@ -91,9 +99,5 @@ public class GameController : MonoBehaviour {
 		Destroy(textGO, duration);
 
 	}
-	
-	public void startGame() {
-		score.reset();  
-		spawner.spawn(0);
-	}
+
 }
