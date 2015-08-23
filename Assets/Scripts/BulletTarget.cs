@@ -27,7 +27,7 @@ public class BulletTarget : MonoBehaviour {
 
 			GameObject asteroidGO = coll.gameObject;
 
-			Vector3 explosionPoint = (transform.position + asteroidGO.transform.position) / 2.0f;
+			Vector3 explosionPoint = 0.5f * (transform.position + asteroidGO.transform.position);
 
 			// Move the explosion on the top of the asteroid in the view hierarchy, hence the 0.5f z vector.
 			GameObject asteroidExplosion = Instantiate(asteroidExplosionModel, explosionPoint - new Vector3(0, 0, 0.5f), asteroidGO.transform.rotation) as GameObject;
