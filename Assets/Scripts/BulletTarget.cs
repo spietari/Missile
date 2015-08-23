@@ -3,51 +3,33 @@ using System.Collections;
 
 public class BulletTarget : MonoBehaviour {
 
-	public GameObject bulletExplosionModel;
 	public GameObject asteroidExplosionModel;
 
-	private bool exploded = false;
 	private GameController gameController;
 
-	// Use this for initialization
 	void Start () {
 		gameController = GameObject.Find("Game Controller").GetComponent<GameController>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
 	}
 
 	void OnTriggerStay2D(Collider2D coll)
 	{
-		Debug.Log("OnTriggerEnter2D " + coll.gameObject.name + " " + exploded);
-
-		if (coll.gameObject.tag == "bullet") {
-			exploded = true;
-
-			GameObject bulletExplosion = Instantiate(bulletExplosionModel, coll.gameObject.transform.position, Quaternion.identity) as GameObject;
-			bulletExplosion.GetComponent<Rigidbody2D>().velocity = 0.2f * coll.gameObject.GetComponent<Rigidbody2D>().velocity;
-			bulletExplosion.transform.parent = gameObject.transform;
-
-			gameObject.GetComponent<CircleCollider2D>().radius = 0.1f;
-
-			Destroy(coll.gameObject);
-			Destroy(gameObject, 4);
-
-		} else if (exploded && coll.gameObject.tag == "asteroid") {
+		if (coll.gameObject.tag == "asteroid") {
 
 			gameController.addKill();
 
-			GameObject asteroidExplosion = Instantiate(asteroidExplosionModel, coll.gameObject.transform.position, Quaternion.identity) as GameObject;
-			asteroidExplosion.GetComponent<Rigidbody2D>().velocity = 0.2f * coll.gameObject.GetComponent<Rigidbody2D>().velocity;
+			GameObject asteroidGO = coll.gameObject;
+			
+			GameObject asteroidExplosion = Instantiate(asteroidExplosionModel, asteroidGO.transform.position - new Vector3(0, 0, 0.5f), asteroidGO.transform.rotation) as GameObject;
+			Rigidbody2D asteroidRB = asteroidGO.GetComponent<Rigidbody2D>();
+			Rigidbody2D explosionRB = asteroidExplosion.GetComponent<Rigidbody2D>();
 
-			Destroy(coll.gameObject);
-			Destroy(gameObject, 4);
-
+			explosionRB.velocity = 1.0f * asteroidRB.velocity;
+			asteroidRB.velocity = explosionRB.velocity;
+			explosionRB.angularVelocity = 0.4f * asteroidRB.angularVelocity;
+			
+			Destroy(asteroidGO, 0.75f);
+			Destroy(gameObject);
+			Destroy(asteroidExplosion, 4);
 		}
-
-
 	}
-
 }

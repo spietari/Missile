@@ -8,9 +8,13 @@ public class GameController : MonoBehaviour {
 	private Score score;
 	private AsteroidSpawner spawner;
 	private Canvas canvas;
-
 	public GameObject messageModel; 
-		
+
+
+	[HideInInspector]
+	public Autopilot autopilot;
+
+	private Text welcomeText;
 	private bool _gameIsRunning = false;
 
 	public bool gameIsRunning {
@@ -22,33 +26,51 @@ public class GameController : MonoBehaviour {
 		set {
 			if (_gameIsRunning == value) return;
 			if (value) {
+				welcomeText.CrossFadeAlpha(0.0f, 1.0f, true);
 				score.reset();
-				showMessage("Destroy the asteroids!");
-				spawner.spawn();
+				spawner.spawn(0);
 			} else {
 				showMessage("Game Over! Click anywhere to try again!");
 			}
 			_gameIsRunning = value;
 		}
 	}
+	
+	void Start() {
+		
+		Go.defaultEaseType = GoEaseType.CircIn;
+		
+		score = GameObject.Find("Score").GetComponent<Score>();
+		spawner = GameObject.Find("Asteroid Spawner").GetComponent<AsteroidSpawner>();
+		canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+		autopilot = GameObject.Find("Autopilot").GetComponent<Autopilot>();
+		welcomeText = GameObject.Find("WelcomeText").GetComponent<Text>();
+
+		autopilot.enabled = false;
+	}
 
 	void Update() {
 		if (!gameIsRunning && Input.GetMouseButtonDown(0)) {
 			gameIsRunning = true;
 		}
-	}
 
-	void Start() {
-		score = GameObject.Find("Score").GetComponent<Score>();
-		spawner = GameObject.Find("Asteroid Spawner").GetComponent<AsteroidSpawner>();
-		canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
-		showMessage("Let's GO! Click anywhere to start playing!", 10);
+		if (gameIsRunning && Input.GetMouseButtonDown(1)) {
+			if (!autopilot.enabled) {
+				autopilot.enabled = true;
+				showMessage("Autopilot engaged!");
+			} else {
+				autopilot.enabled = false;
+				showMessage("Autopilot disconnected!");
+			}
+		}
 	}
-
+	
 	public void addKill() {
-		showMessage("+1");
-		score.score++;
-		spawner.spawn();
+		if (!autopilot.enabled) {
+			showMessage("+1");
+			score.score++;
+		}
+		spawner.spawn(score.score);
 	}
 
 	public void missed() {
@@ -65,13 +87,13 @@ public class GameController : MonoBehaviour {
 		text.rectTransform.localPosition = new Vector3(0, 0, 0);
 
 		text.CrossFadeAlpha(0, duration, true);
-		text.rectTransform.localPositionTo(duration, new Vector3(0, duration * 100 / 3.0f, 0), true);
+		text.rectTransform.localPositionTo(duration, new Vector3(0, duration * 100, 0), true);
 		Destroy(textGO, duration);
 
 	}
 	
 	public void startGame() {
 		score.reset();  
-		spawner.spawn();
+		spawner.spawn(0);
 	}
 }
